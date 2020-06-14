@@ -1,5 +1,4 @@
 //Genres routes file
-const jwt = require('jsonwebtoken');
 const Joi = require("joi");
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
@@ -8,7 +7,7 @@ const { User } = require("../models/user");
 
 const router = express.Router();
 
-//------------------REGISTER-----------------
+//------------------Login-----------------
 router.post("/", async (req, res) => {
   const { error } = validate(req.body); //result.error
   if (error) {
@@ -21,8 +20,7 @@ router.post("/", async (req, res) => {
   const validPassword = await bcrypt.compare(req.body.password, user.password);
   if (!validPassword) return res.status(400).send("Invalid emali or password");
 
-  const token = jwt.sign({_id: user._id}, 'jwtPrivateKey');
-
+  const token = user.generateAuthToken();
   res.send(token);
 });
 

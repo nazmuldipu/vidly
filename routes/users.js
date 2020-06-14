@@ -1,10 +1,18 @@
 //Genres routes file
-const bcrypt = require('bcrypt');
+const auth = require("../middleware/auth");
+const bcrypt = require("bcrypt");
 const _ = require("lodash");
 const express = require("express");
 const { User, validate } = require("../models/user");
 
 const router = express.Router();
+
+
+//------------------User profile-----------------
+router.get("/me", auth, async (req, res) => {
+  const user = await User.findById(req.user._id).select("-password");
+  res.send(user);
+});
 
 //------------------REGISTER-----------------
 router.post("/", async (req, res) => {
@@ -21,7 +29,10 @@ router.post("/", async (req, res) => {
   user.password = await bcrypt.hash(user.password, salt);
   await user.save(user);
 
-  res.send(_.pick(user, ["_id", "name", "email"]));
+  const token = user.generateAuthToken();
+  res
+    .header("x-auth-token", token)
+    .send(_.pick(user, ["_id", "name", "email"]));
 });
 
 module.exports = router;
