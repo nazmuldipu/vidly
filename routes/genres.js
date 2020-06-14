@@ -7,8 +7,7 @@ const { Genre, validate } = require("../models/genre");
 router.post("/", async (req, res) => {
   const { error } = validate(req.body); //result.error
   if (error) {
-    res.status(404).send(error.details[0].message);
-    return;
+    return res.status(404).send(error.details[0].message);
   }
   let genre = new Genre({ name: req.body.name });
   genre = await genre.save(genre);
