@@ -5,24 +5,18 @@ const express = require("express");
 const router = express.Router();
 const validateObjectId = require("../middleware/validateObjectId");
 const { Genre, validate } = require("../models/genre");
+const validator = require("../middleware/validate");
 
 //------------------CREATE-----------------
-router.post("/", auth, async (req, res) => {
-  const { error } = validate(req.body); //result.error
-  if (error) {
-    return res.status(400).send(error.details[0].message);
-  }
+router.post("/", [auth, validator(validate)], async (req, res) => {
   let genre = new Genre({ name: req.body.name });
   genre = await genre.save(genre);
   res.send(genre);
 });
 
 //------------------UPDATE-----------------
-router.put("/:id", [auth, validateObjectId], async (req, res) => {
-  const { error } = validate(req.body); //result.error
-  if (error) {
-    return res.status(400).send(error.details[0].message);
-  }
+router.put("/:id", [auth, validateObjectId, validator(validate)], async (req, res) => {
+  
   const genre = await Genre.findByIdAndUpdate(
     req.params.id,
     { name: req.body.name },
