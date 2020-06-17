@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start":"set vidly_jwtPrivateKey=mySecureKey && node index",
+    "start":"node index",
     "test": "jest --verbose --testEnvironment=node --forceExit --runInBand"
   },
   "engines": {
